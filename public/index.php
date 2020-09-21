@@ -19,7 +19,14 @@ require __DIR__ . '/../vendor/autoload.php';
 <h3>Необходимо подключить в index.php используя namespace класс Router</h3><br>
 
 
+<?php
 
+$router = new liw\core\Router();
+$router->setName("Piter");
+$router->setage("30");
+$router->run();
+
+?>
 
 
   </body>
