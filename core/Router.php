@@ -4,38 +4,19 @@ namespace liw\core;
 class Router
 {
     
-
-    private $name;
-    private $age ;
-
-    public function __construct()
-    {
-        // Обращаемся к конструктору родительского класса
-        echo 'Создался экземпляр класса<br>';
+    private $img;
+   
+    public function getImg() {
+        return $this->tmp_name;
     }
 
-    public function getName() {
-        return $this->name;
+    public function setImg($img) {
+        $this->tmp_name = $img;
+        return $this->tmp_name;
     }
-
-    public function setName($name) {
-        $this->name = $name;
-        return $this->name;
+    
+    public function loodImage() {
+        move_uploaded_file($this->tmp_name['image']['tmp_name'], "lood/img.jpg");
     }
-
-    public function getage() {
-        return $this->age;
-    }
-
-    public function setage($age) {
-        $this->age = $age;
-        return $this->age;
-    }
-
-    public function run() {
-        
-        var_export($this->name);
-        echo '<br>';
-        var_export($this->age);
-    }
+    
 }
