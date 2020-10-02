@@ -1,5 +1,5 @@
 {
-    "name": "alriore/mm",
+    "name": "liw/core",
     "description": "Lessons",
     "type": "project",
     "license": "MIT",
@@ -13,7 +13,8 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "liw\\": ""
+            "liw\\core\\": "core/",
+            "liw\\app\\": "app/"
         }
     }
 }
