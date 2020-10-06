@@ -1,67 +1,145 @@
 <?php
-namespace liw\core;
+
+namespace Core;
 
 class Router
 {
+    protected $routes = [];
     
-    private $routes = [];
-    private $httpHost;
-    private $requestUri;
+    protected $requestUri;
     
-    public function run() 
+    protected $requestMethod;
+    
+    protected $requestHandler;
+    
+    protected $params = [];
+    
+    protected $placeholders = [
+        ':seg' => '([^\/]+)',
+        ':num'  => '([0-9]+)',
+        ':any'  => '(.+)'
+    ];
+    
+    
+    public function __construct($uri, $method = 'GET')
     {
-        if(array_key_exists($this->requestUri, $this->routes)) {
-          $parser = new ControllerNameParser;
-          $checkController = $parser->parse($this->routes[$this->requestUri]);
-          if ($checkController) {
-            $controller = $parser->getController();
-            $contrObj = new $controller();
+        $this->requestUri = $uri;
+        $this->requestMethod = $method;
+    }
+    
+    public static function fromGlobals()
+    {
+        $uri = $_SERVER['REQUEST_URI'];
+        if (false !== $pos = strpos($uri, '?')) {
+            $uri = substr($uri, 0, $pos);
 
-            $action = $parser->getActionName();
-            $contrObj->$action();
-            /*
-            $reflectionController = new \ReflectionClass($parser->getController());
-            $method = $reflectionController->getMethod($parser->getActionName());
-            $method->invokeArgs($contrObj, $this->requestParams);
-            */
+        }
+        $uri = rawurldecode($uri);
+
+        
+
+        return new static($uri, $_SERVER['REQUEST_METHOD']);
+    }
+
+    
+    public function getRequestUri()
+    {
+        return $this->requestUri; // ?: '/';
+    }
+    
+    
+    public function getRequestMethod()
+    {
+        return $this->requestMethod;
+    }
+    
+    
+    public function getRequestHandler()
+    {
+        return $this->requestHandler;
+    }
+    
+    
+    public function setRequestHandler($handler)
+    {
+        $this->requestHandler = $handler;
+    }
+    
+    
+    public function getParams()
+    {
+        return $this->params;
+    }
+    
+    public function add($route, $handler = null)
+    {
+        if ($handler !== null && !is_array($route)) {
+            $route = array($route => $handler);
+        }
+        $this->routes = array_merge($this->routes, $route);
+
+        return $this;
+    }
+
+    public function isFound()
+    {
+        $uri = $this->getRequestUri();
+        
+        if (isset($this->routes[$uri])) {
+            $this->requestHandler = $this->routes[$uri];
+            return true;
+        }
+       
+        $find    = array_keys($this->placeholders);
+        $replace = array_values($this->placeholders);
+        
+        foreach ($this->routes as $route => $handler) {
             
-          } else {
-               throw new \Exception($parser->getErrorMessage());
-          }
-        } else {
-             throw new \Exception('Controller' . $this->requestUri . 'absent');
+            if (strpos($route, ':') !== false) {
+                $route = str_replace($find, $replace, $route);
+            }
+
+           
+            if (preg_match('#^' . $route . '$#', $uri, $matches)) {
+                $this->requestHandler = $handler;
+                $this->params = array_slice($matches, 1);
+                return true;
+                //var_export($handler);
+            }
+        }
+        
+        return false;
+    }
+
+    
+    public function executeHandler($handler = null, $params = array())
+    {
+        if ($handler === null) {
+            throw new \InvalidArgumentException(
+                'Request handler not setted out. Please check '.__CLASS__.'::isFound() first'
+            );
+        }
+        
+       
+        if (is_callable($handler)) {
+            return call_user_func_array($handler, $params);
         }
 
-        
+        if (strpos($handler, '@')) {
+            $ca = explode('@', $handler);
+            $controllerName = $ca[0];
+            $action = $ca[1];
+
+            if (class_exists($controllerName)) {
+                $controller = new $controllerName();
+            } else {
+                throw new \RuntimeException("Controller class '{$controllerName}' not found");
+            }
+            if (!method_exists($controller, $action)) {
+                throw new \RuntimeException("Method '{$controllerName}::{$action}' not found");
+            }
+            
+            return call_user_func_array(array($controller, $action), $params);
+        }
     }
-
-    public function __construct()
-    {
-       echo 'Создался экземпляр класса core\Router.php<br>';
-       $this->setRoutes();
-       $this->setServerParams();
-    }
-
-    private function setRoutes(): void
-    {
-      
-        $this->routes = include __DIR__ . '/../app/Config/Route.php';
-    }
-
-    private function setServerParams(): void
-    {
-      $this->httpHost = $_SERVER['HTTP_HOST'];
-      $this->requestUri = $_SERVER['REQUEST_URI'];
-    
-        
-      //var_export($this->httpHost);
-      var_export($this->requestUri);
-      //var_export($_SERVER);
-    }
-
-
-
-    
 }
-
-?>
