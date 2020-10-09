@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 class ControllerAbout
 {
-    public static function aboutAction()
+    public function aboutAction()
     {   
         header('Location: about.php');
     }

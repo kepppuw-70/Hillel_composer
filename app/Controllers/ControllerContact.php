@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 class ControllerContact
 {
-    public static function contactAction()
+    public function contactAction()
     {   
         header('Location: contact.php');
     }

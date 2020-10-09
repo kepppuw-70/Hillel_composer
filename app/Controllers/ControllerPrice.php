@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 class ControllerPrice
 {
-    public static function priceAction()
+    public function priceAction()
     {
         header('Location: price.php');
     }
