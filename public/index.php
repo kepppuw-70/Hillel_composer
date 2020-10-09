@@ -1,32 +1,26 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Домашнее задание № 9</title>
-   <link rel="stylesheet" type="text/css" href="css/style2.css">
-   
-  </head>
-  <body>
-
 <?php
-require_once ('global.php');
-
+session_start();
 require __DIR__ . '/../vendor/autoload.php';
-
 use Core\Router;
-?>
-
-<h1>Домашнее задание № 9</h1><br>
-
-
-<?php
-
-$router = new liw\core\Router();
-$router->run();
-
-?>
-
-
-  </body>
-</html> 
-
+include 'template/template.php';
+$route = include __DIR__ . '/../app/Config/Route.php';
+$router = Router::fromGlobals();
+$router->add('/', function () {
+    echo '<h1>Hello Wold!</h1>';
+});
+$router->add($route);
+if ($router->isFound()) {
+    $router->executeHandler(
+        $router->getRequestHandler(),
+        $router->getParams()
+    );
+} 
+else {
+       $router->executeHandler(function () {
+        http_response_code(404);
+        $_SESSION['path'] = $_SERVER['REQUEST_URI'];
+        $notfound = new App\Controllers\ControllerNotFound();
+        $notfound->priceNotFound();
+        
+    });
+}

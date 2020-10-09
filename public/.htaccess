@@ -1,6 +1,13 @@
-RewriteEngine on
-# если папка или файл реально существуют, используем их
-RewriteCond %{REQUEST_FILENAME} !-f
+AddDefaultCharset utf-8
+Options -Indexes
+
+RewriteEngine On
+
+# Redirect from www
+#RewriteCond %{HTTP_HOST} ^www\.(.*) [NC]
+#RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+# All requests to index.php
 RewriteCond %{REQUEST_FILENAME} !-d
-# если нет — отдаём всё index.php
-RewriteRule . index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php [QSA,L]

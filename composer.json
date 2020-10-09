@@ -1,20 +1,17 @@
 {
-    "name": "liw/core",
-    "description": "Lessons",
-    "type": "project",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Razzwan",
-            "email": "razvanlomov@gmail.com"
-        }
-    ],
-    "minimum-stability": "stable",
-    "require": {},
-    "autoload": {
-        "psr-4": {
-            "liw\\core\\": "core/",
-            "liw\\app\\": "app/"
-        }
+  "name": "beejee/test",
+  "type": "project",
+  "description": "The BeeJee test.",
+  "license": "MIT",
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "Core\\": "core/"
     }
+  }
 }
