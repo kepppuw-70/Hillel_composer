@@ -6,7 +6,7 @@ class ControllerRegistration
 {
     public static function registrationAction()
     {   
-        header('Location: registration.php');
+      include 'template/template.php';
     }
 
 }

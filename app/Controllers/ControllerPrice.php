@@ -6,7 +6,7 @@ class ControllerPrice
 {
     public static function priceAction()
     {
-        header('Location: price.php');
+      include 'template/template.php';
     }
 
 }

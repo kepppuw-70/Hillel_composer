@@ -6,7 +6,7 @@ class ControllerContact
 {
     public static function contactAction()
     {   
-        header('Location: contact.php');
+     include 'template/template.php';
     }
 
 }

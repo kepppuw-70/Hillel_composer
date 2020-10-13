@@ -1,9 +1,11 @@
+
 <?php
-session_start();
+require_once 'connection.php';
 require __DIR__ . '/../vendor/autoload.php';
 use Core\Router;
-include 'template/template.php';
 $route = include __DIR__ . '/../app/Config/Route.php';
+$view = new App\View\View();
+$view->onView();
 $router = Router::fromGlobals();
 $router->add('/', function () {
     echo '<h1>Hello Wold!</h1>';
@@ -18,9 +20,14 @@ if ($router->isFound()) {
 else {
        $router->executeHandler(function () {
         http_response_code(404);
-        $_SESSION['path'] = $_SERVER['REQUEST_URI'];
         $notfound = new App\Controllers\ControllerNotFound();
         $notfound->priceNotFound();
         
     });
 }
+
+$connecter = new Core\Db\Connecter();
+$connecter->setConnecter($host, $database, $user, $password);
+$connecter->connecterDb();
+
+
