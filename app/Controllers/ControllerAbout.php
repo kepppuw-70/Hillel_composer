@@ -6,7 +6,7 @@ class ControllerAbout
 {
     public static function aboutAction()
     {   
-        header('Location: about.php');
+       include 'template/template_view.php';
     }
 
 }
